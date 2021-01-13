@@ -1,6 +1,6 @@
 "use strict";
 
-const { parse } = require("dotenv/types");
+
 const db = require("../db");
 const { BadRequestError, NotFoundError } = require("../expressError");
 const { sqlForPartialUpdate } = require("../helpers/sql");

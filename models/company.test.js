@@ -144,7 +144,7 @@ describe("findAll (filtered) companies", function () {
 
     test("minEmployees exceeds maxEmployees", async function () {
 
-      expect(() => { await Company.filter({ name: "", minEmployees: 3, maxEmployees: 1 }); }).toThrowError(new BadRequestError("minEmployees cannot exceed maxEmployees."));
+      expect(async () => { await Company.filter({ name: "", minEmployees: 3, maxEmployees: 1 }); }).toThrowError(new BadRequestError("minEmployees cannot exceed maxEmployees."));
     });
   });
 
@@ -154,18 +154,21 @@ describe("findAll (filtered) companies", function () {
   });
 
   test("negative min", async function () {
-    expect(() => { await Company.filter({ name: "", minEmployees: -44, maxEmployees: 77 }).toThrowError(new BadRequestError("minEmployees & maxEmployees must be non-negative integers."));
+    expect(async () => {
+      await Company.filter({ name: "", minEmployees: -44, maxEmployees: 77 }).toThrowError(new BadRequestError("minEmployees & maxEmployees must be non-negative integers."));
+    });
   });
-
   test("negative max", async function () {
-    expect(() => { await Company.filter({ name: "", minEmployees: 44, maxEmployees: -77 }).toThrowError(new BadRequestError("minEmployees & maxEmployees must be non-negative integers."));
+    expect(async () => {
+      await Company.filter({ name: "", minEmployees: 44, maxEmployees: -77 }).toThrowError(new BadRequestError("minEmployees & maxEmployees must be non-negative integers."));
+    });
   });
-
   test("invalid max: string max", async function () {
-    expect(() => { await Company.filter({ name: "", minEmployees: 44, maxEmployees: "goofball" }).toThrowError(new BadRequestError("minEmployees & maxEmployees must be non-negative integers."));
-  });
-}); //End of describe function
-
+    expect(async () => {
+      await Company.filter({ name: "", minEmployees: 44, maxEmployees: "goofball" }).toThrowError(new BadRequestError("minEmployees & maxEmployees must be non-negative integers."));
+    });
+  }); //End of describe function
+});
 /************************************** get */
 
 describe("get", function () {

@@ -73,29 +73,24 @@ class Company {
   static async filterCompanies({ name, minEmployees, maxEmployees }) {
 
     minEmployees = parseInt(minEmployees);
-    maxEmployees = (maxEmployees !== Infinity)
-      ? parseInt(maxEmployees)
-      : maxEmployees;
-    if (isNaN(minEmployees) || isNaN(maxEmployees) || (minEmployees < 0 || maxEmployees < 0)) {
-      throw new BadRequestError("minEmployees & maxEmployees must be non-negative integers.")
-    }
+    maxEmployees = parseInt(maxEmployees);
+
     if (minEmployees > maxEmployees) {
-      throw new BadRequestError("minEmployees cannot exceed maxEmployees.")
+      throw new BadRequestError("minEmployees cannot exceed maxEmployees.");
     }
     let filterStrArr = [];
-    if (name.length > 0) {
+    if (name && !name.includes(`'`) && !name.includes(`;`)) {
+      console.log("filter: name", name)
       filterStrArr.push(`name ILIKE '%${name}%'`);
     }
     if (minEmployees !== 0) {
       filterStrArr.push(`num_employees >= ${minEmployees}`);
     }
-    if (maxEmployees !== Infinity) {
+    if (!isNaN(maxEmployees)) {
       filterStrArr.push(`num_employees <= ${maxEmployees}`);
-
     }
-    console.log("where array", filterStrArr);
     const whereClause = filterStrArr.join(" AND ");
-    console.log("where string", whereClause);
+    // console.log("where string", whereClause);
     const companiesRes = await db.query(
       `SELECT handle,
                   name,
@@ -105,26 +100,10 @@ class Company {
            FROM companies
            WHERE ${whereClause}
            ORDER BY name`);
-    // console.log("filter results:", companiesRes);
     return companiesRes.rows;
   }
 
-  // `SELECT handle,
-  //                 name,
-  //                 description,
-  //                 num_employees AS "numEmployees",
-  //                 logo_url AS "logoUrl"
-  //          FROM companies
-  //          WHERE name ilike '%com%' AND numEmployees >=2
-  //          ORDER BY name`
-  /** Given a company handle, return data about company.
-   *
-   * Returns { handle, name, description, numEmployees, logoUrl, jobs }
-   *   where jobs is [{ id, title, salary, equity, companyHandle }, ...]
-   *
-   * Throws NotFoundError if not found.
-   **/
-
+  /* gets company by handle */
   static async get(handle) {
     const companyRes = await db.query(
       `SELECT handle,

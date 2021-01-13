@@ -94,6 +94,13 @@ describe("GET /companies", function () {
             },
           ],
     });
+  test("validation works properly", async function () {
+    const resp = await request(app).get("/companies?name=7");
+    expect(resp.body).toEqual({
+      companies:
+          [
+          ],
+    });
   });
 
   test("fails: test next() handler", async function () {

@@ -80,18 +80,20 @@ class Company {
     if (minEmployees > maxEmployees) {
       throw new BadRequestError("minEmployees cannot exceed maxEmployees.")
     }
-    let where = [];
+    let filterStrArr = [];
     if (name.length > 0){
-      where.push(`name ILIKE '%${name}%'`);
+      filterStrArr.push(`name ILIKE '%${name}%'`);
     }
-    if (minEmployees === 0){
-      where.push(`numEmployees >= ${minEmployees}`);
+    if (minEmployees !== 0){
+      filterStrArr.push(`num_employees >= ${minEmployees}`);
     }
-    if (maxEmployees === Infinity){
-      where.push(`numEmployees <= ${maxEmployees}`);
+    if (maxEmployees !== Infinity){
+      filterStrArr.push(`num_employees <= ${maxEmployees}`);
 
     }
-    where = where.join(" OR ");
+    console.log("where array", filterStrArr);
+    const whereClause = filterStrArr.join(" AND ");
+    console.log("where string", whereClause );
     const companiesRes = await db.query(
       `SELECT handle,
                   name,
@@ -100,10 +102,19 @@ class Company {
                   logo_url AS "logoUrl"
            FROM companies
            WHERE $1
-           ORDER BY name`, [where]);
+           ORDER BY name`, [whereClause]);
+    console.log("filter results:", companiesRes );
     return companiesRes.rows;
   }
 
+  // `SELECT handle,
+  //                 name,
+  //                 description,
+  //                 num_employees AS "numEmployees",
+  //                 logo_url AS "logoUrl"
+  //          FROM companies
+  //          WHERE name ilike '%com%' AND numEmployees >=2
+  //          ORDER BY name`
   /** Given a company handle, return data about company.
    *
    * Returns { handle, name, description, numEmployees, logoUrl, jobs }

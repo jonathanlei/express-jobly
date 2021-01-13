@@ -96,7 +96,7 @@ describe("findAll", function () {
 
 describe("findAll (filtered) companies", function () {
   test("minEmployees filter", async function () {
-    let companies = await Company.filter({ name: "", minEmployees: 3, maxEmployees: 10 });
+    let companies = await Company.filter({ name: "", minEmployees: "3", maxEmployees: "10" });
     expect(companies).toEqual([
       {
         handle: "c3",
@@ -108,7 +108,7 @@ describe("findAll (filtered) companies", function () {
     ]);
   });
   test("maxEmployees filter", async function () {
-    let companies = await Company.filter({ name: "", minEmployees: 1, maxEmployees: 2 });
+    let companies = await Company.filter({ name: "", minEmployees: "1", maxEmployees: "2" });
     expect(companies).toEqual([
       {
         handle: "c1",

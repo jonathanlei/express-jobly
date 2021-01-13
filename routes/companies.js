@@ -47,9 +47,9 @@ router.post("/", ensureLoggedIn, async function (req, res, next) {
  */
 
 router.get("/", async function (req, res, next) {
-  const name = req.params.name || "";
-  const minEmployees = req.params.minEmployees || 0;
-  const maxEmployees = req.params.maxEmployees || Infinity;
+  const name = req.query.name || "";
+  const minEmployees = req.query.minEmployees || 0;
+  const maxEmployees = req.query.maxEmployees || Infinity;
 
   if (name || minEmployees || maxEmployees) {
     const companies = await Company.filter({ name, minEmployees, maxEmployees });

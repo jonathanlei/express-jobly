@@ -12,7 +12,7 @@ const Company = require("../models/company");
 const companyNewSchema = require("../schemas/companyNew.json");
 const companyUpdateSchema = require("../schemas/companyUpdate.json");
 const companyFilterSchema = require("../schemas/companyFilter.json");
-
+const veryLargeNum = 9000000000;
 const router = new express.Router();
 
 
@@ -52,8 +52,8 @@ router.get("/", async function (req, res, next) {
   if (Object.keys(req.query).length > 0) {
     let query = {
       name: req.query.name,
-      minEmployees: parseInt(req.query.minEmployees),
-      maxEmployees: parseInt(req.query.maxEmployees)
+      minEmployees: parseInt(req.query.minEmployees || 0),
+      maxEmployees: parseInt(req.query.maxEmployees || veryLargeNum)
     }
     const validator = jsonschema.validate(query, companyFilterSchema);
     if (!validator.valid) {

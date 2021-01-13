@@ -71,16 +71,11 @@ class Company {
    **/
 
   static async filterCompanies({ name, minEmployees, maxEmployees }) {
-
-    minEmployees = parseInt(minEmployees);
-    maxEmployees = parseInt(maxEmployees);
-
     if (minEmployees > maxEmployees) {
       throw new BadRequestError("minEmployees cannot exceed maxEmployees.");
     }
     let filterStrArr = [];
     if (name && !name.includes(`'`) && !name.includes(`;`)) {
-      console.log("filter: name", name)
       filterStrArr.push(`name ILIKE '%${name}%'`);
     }
     if (minEmployees !== 0) {
@@ -90,7 +85,6 @@ class Company {
       filterStrArr.push(`num_employees <= ${maxEmployees}`);
     }
     const whereClause = filterStrArr.join(" AND ");
-    // console.log("where string", whereClause);
     const companiesRes = await db.query(
       `SELECT handle,
                   name,

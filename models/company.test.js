@@ -96,7 +96,7 @@ describe("findAll", function () {
 
 describe("findAll (filtered) companies", function () {
   test("minEmployees filter", async function () {
-    let companies = await Company.filter({ name: "", minEmployees: "3", maxEmployees: "10" });
+    let companies = await Company.filterCompanies({ name: "", minEmployees: "3", maxEmployees: "10" });
     expect(companies).toEqual([
       {
         handle: "c3",
@@ -107,8 +107,8 @@ describe("findAll (filtered) companies", function () {
       },
     ]);
   });
-  test("maxEmployees filter", async function () {
-    let companies = await Company.filter({ name: "", minEmployees: "1", maxEmployees: "2" });
+  test("maxEmployees filterCompanies", async function () {
+    let companies = await Company.filterCompanies({ name: "", minEmployees: "1", maxEmployees: "2" });
     expect(companies).toEqual([
       {
         handle: "c1",
@@ -125,50 +125,53 @@ describe("findAll (filtered) companies", function () {
         logoUrl: "http://c2.img",
       },
     ]);
+  });
 
-    test("name filter", async function () {
-      const newCompany = {
-        handle: "new",
-        name: "New Company",
-        description: "New Description",
-        numEmployees: 1,
-        logoUrl: "http://new.img",
-      };
-      let companyToBeReturned = await Company.create(newCompany);
 
-      let companies = await Company.filter({ name: "new", minEmployees: 0, maxEmployees: Infinity });
-      expect(companies).toEqual([
-        newCompany
-      ]);
-    });
+  test("name filterCompanies", async function () {
+    const newCompany = {
+      handle: "new",
+      name: "New Company",
+      description: "New Description",
+      numEmployees: 1,
+      logoUrl: "http://new.img",
+    };
+    let companyToBeReturned = await Company.create(newCompany);
 
-    test("minEmployees exceeds maxEmployees", async function () {
+    let companies = await Company.filterCompanies({ name: "new", minEmployees: "0", maxEmployees: Infinity });
+    expect(companies).toEqual([
+      newCompany
+    ]);
+  });
 
-      expect(async () => { await Company.filter({ name: "", minEmployees: 3, maxEmployees: 1 }); }).toThrowError(new BadRequestError("minEmployees cannot exceed maxEmployees."));
+  test("minEmployees exceeds maxEmployees", async function () {
+    expect(async () => {
+      await Company.filterCompanies({ name: "", minEmployees: "3", maxEmployees: "1" }).toThrowError(new BadRequestError("minEmployees cannot exceed maxEmployees."));
     });
   });
 
-  test("filter no match", async function () {
-    let companies = await Company.filter({ name: "neverMakeAcompanyCalledthis", minEmployees: 44, maxEmployees: 44 });
+  test("filterCompanies no match", async function () {
+    let companies = await Company.filterCompanies({ name: "neverMakeAcompanyCalledthis", minEmployees: 44, maxEmployees: 44 });
     expect(companies).toEqual([]);
   });
 
   test("negative min", async function () {
     expect(async () => {
-      await Company.filter({ name: "", minEmployees: -44, maxEmployees: 77 }).toThrowError(new BadRequestError("minEmployees & maxEmployees must be non-negative integers."));
+      await Company.filterCompanies({ name: "", minEmployees: -44, maxEmployees: 77 }).toThrowError(new BadRequestError("minEmployees & maxEmployees must be non-negative integers."));
     });
   });
   test("negative max", async function () {
     expect(async () => {
-      await Company.filter({ name: "", minEmployees: 44, maxEmployees: -77 }).toThrowError(new BadRequestError("minEmployees & maxEmployees must be non-negative integers."));
+      await Company.filterCompanies({ name: "", minEmployees: 44, maxEmployees: -77 }).toThrowError(new BadRequestError("minEmployees & maxEmployees must be non-negative integers."));
     });
   });
   test("invalid max: string max", async function () {
     expect(async () => {
-      await Company.filter({ name: "", minEmployees: 44, maxEmployees: "goofball" }).toThrowError(new BadRequestError("minEmployees & maxEmployees must be non-negative integers."));
+      await Company.filterCompanies({ name: "", minEmployees: 44, maxEmployees: "goofball" }).toThrowError(new BadRequestError("minEmployees & maxEmployees must be non-negative integers."));
     });
-  }); //End of describe function
-});
+  });
+});//End of describe function
+
 /************************************** get */
 
 describe("get", function () {

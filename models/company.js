@@ -70,10 +70,12 @@ class Company {
     * If no companies found, returns []
    **/
 
-  static async filter({ name, minEmployees, maxEmployees }) {
+  static async filterCompanies({ name, minEmployees, maxEmployees }) {
 
     minEmployees = parseInt(minEmployees);
-    maxEmployees = parseInt(maxEmployees);
+    maxEmployees = (maxEmployees !== Infinity)
+      ? parseInt(maxEmployees)
+      : maxEmployees;
     if (isNaN(minEmployees) || isNaN(maxEmployees) || (minEmployees < 0 || maxEmployees < 0)) {
       throw new BadRequestError("minEmployees & maxEmployees must be non-negative integers.")
     }
@@ -81,19 +83,19 @@ class Company {
       throw new BadRequestError("minEmployees cannot exceed maxEmployees.")
     }
     let filterStrArr = [];
-    if (name.length > 0){
+    if (name.length > 0) {
       filterStrArr.push(`name ILIKE '%${name}%'`);
     }
-    if (minEmployees !== 0){
+    if (minEmployees !== 0) {
       filterStrArr.push(`num_employees >= ${minEmployees}`);
     }
-    if (maxEmployees !== Infinity){
+    if (maxEmployees !== Infinity) {
       filterStrArr.push(`num_employees <= ${maxEmployees}`);
 
     }
     console.log("where array", filterStrArr);
     const whereClause = filterStrArr.join(" AND ");
-    console.log("where string", whereClause );
+    console.log("where string", whereClause);
     const companiesRes = await db.query(
       `SELECT handle,
                   name,
@@ -101,9 +103,9 @@ class Company {
                   num_employees AS "numEmployees",
                   logo_url AS "logoUrl"
            FROM companies
-           WHERE $1
-           ORDER BY name`, [whereClause]);
-    console.log("filter results:", companiesRes );
+           WHERE ${whereClause}
+           ORDER BY name`);
+    // console.log("filter results:", companiesRes);
     return companiesRes.rows;
   }
 

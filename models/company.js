@@ -81,7 +81,7 @@ class Company {
     if (minEmployees !== 0) {
       filterStrArr.push(`num_employees >= ${minEmployees}`);
     }
-    if (!isNaN(maxEmployees)) {
+    if (!Number.isNaN(maxEmployees)) {
       filterStrArr.push(`num_employees <= ${maxEmployees}`);
     }
     const whereClause = filterStrArr.join(" AND ");

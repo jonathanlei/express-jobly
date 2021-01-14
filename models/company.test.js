@@ -154,7 +154,7 @@ describe("findAll (filtered) companies", function () {
     let companies = await Company.filterCompanies({ name: "neverMakeAcompanyCalledthis", minEmployees: 44, maxEmployees: 44 });
     expect(companies).toEqual([]);
   });
-
+  // pass in the badrequesterror class
   test("negative min", async function () {
     expect(async () => {
       await Company.filterCompanies({ name: "", minEmployees: -44, maxEmployees: 77 }).toThrowError(new BadRequestError());
@@ -170,7 +170,9 @@ describe("findAll (filtered) companies", function () {
       await Company.filterCompanies({ name: "", minEmployees: 44, maxEmployees: "goofball" }).toThrowError(new BadRequestError());
     });
   });
-});//End of describe function
+});
+// test for invalid min
+//End of describe function
 
 /************************************** get */
 

@@ -58,7 +58,11 @@ function ensureIsAdmin(req, res, next) {
     return next(err);
   }
 }
-/* Middleware to use they must be Admin to access the contents
+
+// put res.locals.user into a variable => user 
+// put if conditions on one lines
+
+/* Middleware to use they must be Admin or Current User to access the contents
 * If not, raises Unauthorized
 */
 function ensureAdminOrCurrentUser(req, res, next) {

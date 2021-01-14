@@ -88,9 +88,10 @@ router.get("/:handle", async function (req, res, next) {
  *
  * Returns { handle, name, description, numEmployees, logo_url }
  *
- * Authorization required: login
+ * Authorization required: Admin
  */
 
+ // update docstrings 
 router.patch("/:handle", ensureIsAdmin, async function (req, res, next) {
   const validator = jsonschema.validate(req.body, companyUpdateSchema);
   if (!validator.valid) {

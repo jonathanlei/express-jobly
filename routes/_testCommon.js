@@ -3,7 +3,9 @@
 const db = require("../db.js");
 const User = require("../models/user");
 const Company = require("../models/company");
+const Job = require("../models/job");
 const { createToken } = require("../helpers/tokens");
+const jobIds = {};
 
 async function commonBeforeAll() {
   // noinspection SqlWithoutWhere
@@ -12,29 +14,29 @@ async function commonBeforeAll() {
   await db.query("DELETE FROM companies");
 
   await Company.create(
-      {
-        handle: "c1",
-        name: "C1",
-        numEmployees: 1,
-        description: "Desc1",
-        logoUrl: "http://c1.img",
-      });
+    {
+      handle: "c1",
+      name: "C1",
+      numEmployees: 1,
+      description: "Desc1",
+      logoUrl: "http://c1.img",
+    });
   await Company.create(
-      {
-        handle: "c2",
-        name: "C2",
-        numEmployees: 2,
-        description: "Desc2",
-        logoUrl: "http://c2.img",
-      });
+    {
+      handle: "c2",
+      name: "C2",
+      numEmployees: 2,
+      description: "Desc2",
+      logoUrl: "http://c2.img",
+    });
   await Company.create(
-      {
-        handle: "c3",
-        name: "C3",
-        numEmployees: 3,
-        description: "Desc3",
-        logoUrl: "http://c3.img",
-      });
+    {
+      handle: "c3",
+      name: "C3",
+      numEmployees: 3,
+      description: "Desc3",
+      logoUrl: "http://c3.img",
+    });
 
   await User.register({
     username: "u1",
@@ -60,6 +62,30 @@ async function commonBeforeAll() {
     password: "password3",
     isAdmin: false,
   });
+
+
+  const job1 = await Job.create({
+    title: "j1",
+    salary: 100000,
+    equity: 0.001,
+    company_handle: "c1"
+  })
+  jobIds[job1.title] = job1.id;
+  const job2 = await Job.create({
+    title: "j2",
+    salary: 1000000,
+    equity: 0,
+    company_handle: "c2"
+  })
+  jobIds[job2.title] = job2.id;
+  const job3 = await Job.create({
+    title: "j3",
+    salary: 80000,
+    equity: 0.085,
+    company_handle: "c3"
+  })
+  jobIds[job3.title] = job3.id;
+
 }
 
 async function commonBeforeEach() {
@@ -86,4 +112,5 @@ module.exports = {
   commonAfterAll,
   u1Token,
   adminToken,
+  jobIds
 };

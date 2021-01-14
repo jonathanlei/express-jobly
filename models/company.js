@@ -78,10 +78,10 @@ class Company {
     if (name && !name.includes(`'`) && !name.includes(`;`)) {
       filterStrArr.push(`name ILIKE '%${name}%'`);
     }
-    if (minEmployees !== 0) {
+    if (minEmployees !== undefined) {
       filterStrArr.push(`num_employees >= ${minEmployees}`);
     }
-    if (!Number.isNaN(maxEmployees)) {
+    if (maxEmployees !== undefined) {
       filterStrArr.push(`num_employees <= ${maxEmployees}`);
     }
     const whereClause = filterStrArr.join(" AND ");

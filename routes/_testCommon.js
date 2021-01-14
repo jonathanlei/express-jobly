@@ -64,27 +64,27 @@ async function commonBeforeAll() {
   });
 
 
-  const job1 = await Job.create({
-    title: "j1",
-    salary: 100000,
-    equity: 0.001,
-    company_handle: "c1"
-  })
-  jobIds[job1.title] = job1.id;
-  const job2 = await Job.create({
-    title: "j2",
-    salary: 1000000,
-    equity: 0,
-    company_handle: "c2"
-  })
-  jobIds[job2.title] = job2.id;
-  const job3 = await Job.create({
-    title: "j3",
-    salary: 80000,
-    equity: 0.085,
-    company_handle: "c3"
-  })
-  jobIds[job3.title] = job3.id;
+  // const job1 = await Job.create({
+  //   title: "j1",
+  //   salary: 100000,
+  //   equity: 0.001,
+  //   company_handle: "c1"
+  // })
+  // jobIds[job1.title] = job1.id;
+  // const job2 = await Job.create({
+  //   title: "j2",
+  //   salary: 1000000,
+  //   equity: 0,
+  //   company_handle: "c2"
+  // })
+  // jobIds[job2.title] = job2.id;
+  // const job3 = await Job.create({
+  //   title: "j3",
+  //   salary: 80000,
+  //   equity: 0.085,
+  //   company_handle: "c3"
+  // })
+
 
 }
 
@@ -111,6 +111,5 @@ module.exports = {
   commonAfterEach,
   commonAfterAll,
   u1Token,
-  adminToken,
-  jobIds
+  adminToken
 };

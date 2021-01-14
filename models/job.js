@@ -32,9 +32,8 @@ class Job {
           equity,
           companyHandle
         ]);
-      console.log("result:", result.rows[0]);
     } catch (err) {
-      if (err.constraint === FOREIGNKEYCONSTRAINT){
+      if (err.constraint === FOREIGNKEYCONSTRAINT) {
         throw new NotFoundError(`${companyHandle} is not found in the database`);
       }
       throw err;
@@ -43,21 +42,17 @@ class Job {
     return job;
   }
 
-  /** Find all companies.
+  /** Find all Jobs.
    *
-   * Returns [{ handle, name, description, numEmployees, logoUrl }, ...]
+   * Returns [{ id, title, salary, equity, company_handle AS "companyHandle"}, ...]
    * */
 
   static async findAll() {
-    const companiesRes = await db.query(
-      `SELECT handle,
-                  name,
-                  description,
-                  num_employees AS "numEmployees",
-                  logo_url AS "logoUrl"
-           FROM companies
-           ORDER BY name`);
-    return companiesRes.rows;
+    const jobsResp = await db.query(
+      `SELECT id, title, salary, equity, company_handle AS "companyHandle"
+           FROM jobs
+           ORDER BY id`);
+    return jobsResp.rows;
   }
   // /** Filter list of all companies.
   //   * name: filter by company name that includes given phrase (case insensitive)
@@ -97,21 +92,16 @@ class Job {
 
   /* gets job by id */
   static async get(id) {
-    const companyRes = await db.query(
-      `SELECT handle,
-                  name,
-                  description,
-                  num_employees AS "numEmployees",
-                  logo_url AS "logoUrl"
-           FROM companies
-           WHERE handle = $1`,
-      [handle]);
+    const jobsResp = await db.query(
+      `SELECT id, title, salary, equity, company_handle AS "companyHandle"
+           FROM jobs
+           WHERE id = $1
+           ORDER BY title`, [id]);
+    const job = jobsResp.rows[0];
 
-    const company = companyRes.rows[0];
+    if (!job) throw new NotFoundError(`No job: ${id}`);
 
-    if (!company) throw new NotFoundError(`No company: ${handle}`);
-
-    return company;
+    return job;
   }
 
   /** Update company data with `data`.

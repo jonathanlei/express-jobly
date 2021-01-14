@@ -6,6 +6,7 @@ const {
   authenticateJWT,
   ensureLoggedIn,
   ensureIsAdmin,
+  ensureAdminOrCurrentUser
 } = require("./auth");
 
 
@@ -56,11 +57,11 @@ describe("authenticateJWT", function () {
 });
 
 
-describe("ensureLoggedIn", function () {
+describe("ensureAdmin", function () {
   test("works", function () {
     expect.assertions(1);
     const req = {};
-    const res = { locals: { user: { username: "test", is_admin: false } } };
+    const res = { locals: { user: { username: "test",  isAdmin: false } } };
     const next = function (err) {
       expect(err).toBeFalsy();
     };
@@ -82,7 +83,7 @@ describe("ensureIsAdmin", function () {
   test("logged in but not admin", function () {
     expect.assertions(1);
     const req = {};
-    const res = { locals: { user: { username: "test", is_admin: false } } };
+    const res = { locals: { user: { username: "test",  isAdmin: false } } };
     const next = function (err) {
       expect(err instanceof UnauthorizedError).toBeTruthy();
     };
@@ -92,11 +93,11 @@ describe("ensureIsAdmin", function () {
   test("isAdmin", function () {
     expect.assertions(1);
     const req = {};
-    const res = { locals: { user: { username: "test", is_admin: true } } };
+    const res = { locals: { user: { username: "test",  isAdmin: true } } };
     const next = function (err) {
       expect(err).toBeFalsy();
     };
-    ensureLoggedIn(req, res, next);
+    ensureIsAdmin(req, res, next);
   });
 
   test("unauth if no login", function () {
@@ -106,6 +107,62 @@ describe("ensureIsAdmin", function () {
     const next = function (err) {
       expect(err instanceof UnauthorizedError).toBeTruthy();
     };
-    ensureLoggedIn(req, res, next);
+    ensureIsAdmin(req, res, next);
+  });
+});
+
+
+describe("ensureAdminOrCurrentUser", function () {
+
+  test("logged in as current user but not admin ", function () {
+    expect.assertions(1);
+    const req = {params: {username: "test"}};
+    const res = { locals: { user: { username: "test",  isAdmin: false } } };
+    const next = function (err) {
+      expect(err).toBeFalsy();
+    };
+    ensureAdminOrCurrentUser(req, res, next);
+  });
+
+  test("logged in as Admin but not current user", function () {
+    expect.assertions(1);
+    const req = {params: {username: "test1"}};
+    const res = { locals: { user: { username: "test",  isAdmin: true } } };
+    const next = function (err) {
+      expect(err).toBeFalsy();
+    };
+    ensureAdminOrCurrentUser(req, res, next);
+  });
+  
+
+  test("logged in as both admin and current user", function () {
+    expect.assertions(1);
+    const req = {params: {username: "test"}};
+    const res = { locals: { user: { username: "test",  isAdmin: true } } };
+    const next = function (err) {
+      expect(err).toBeFalsy();
+    };
+    ensureAdminOrCurrentUser(req, res, next);
+  });
+
+  test("logged in not as current user or admin", function () {
+    expect.assertions(1);
+    const req = {params: {username: "test"}};
+    const res = { locals: { user: { username: "test2",  isAdmin: false } } };
+    const next = function (err) {
+      expect(err instanceof UnauthorizedError).toBeTruthy();
+    };
+    ensureAdminOrCurrentUser(req, res, next);
+  });
+
+
+  test("unauth if no login", function () {
+    expect.assertions(1);
+    const req = {};
+    const res = { locals: {} };
+    const next = function (err) {
+      expect(err instanceof UnauthorizedError).toBeTruthy();
+    };
+    ensureAdminOrCurrentUser(req, res, next);
   });
 });

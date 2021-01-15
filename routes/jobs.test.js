@@ -12,7 +12,6 @@ const {
   commonAfterAll,
   u1Token,
   adminToken,
-  getJ1Id,
 } = require("./_testCommon");
 
 beforeAll(commonBeforeAll);
@@ -34,7 +33,7 @@ describe("POST /jobs", function () {
     title: "new",
     salary: 80000,
     equity: 0.085,
-    company_handle: "c1"
+    companyHandle: "c1"
   };
 
   test("ok for admins", async function () {
@@ -46,7 +45,10 @@ describe("POST /jobs", function () {
     expect(resp.body).toEqual({
       job: {
         id: expect.any(Number),
-        ...newJob
+        title: "new",
+        salary: 80000,
+        equity: "0.085",
+        companyHandle: "c1"
       }
     });
   });
@@ -238,7 +240,7 @@ describe("PATCH /jobs/:id", function () {
       })
       .set("authorization", `Bearer ${adminToken}`);
     expect(resp.body).toEqual({
-      jobs: {
+      job: {
         id: expect.any(Number),
         title: "J1-new",
         salary: 100000,
@@ -273,7 +275,7 @@ describe("PATCH /jobs/:id", function () {
     const resp = await request(app)
       .patch(`/jobs/77777777`)
       .send({
-        name: "new nope",
+        title: "new nope",
       })
       .set("authorization", `Bearer ${adminToken}`);
     expect(resp.statusCode).toEqual(404);

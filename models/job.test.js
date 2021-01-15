@@ -7,7 +7,7 @@ const {
   commonBeforeAll,
   commonBeforeEach,
   commonAfterEach,
-  commonAfterAll
+  commonAfterAll,
 } = require("./_testCommon");
 
 beforeAll(commonBeforeAll);
@@ -15,8 +15,8 @@ beforeEach(commonBeforeEach);
 afterEach(commonAfterEach);
 afterAll(commonAfterAll);
 
-/* Helper function to find job1's id */
-async function getJ1Id(){
+ /* Helper function to find job1's id */
+const getJ1Id = async function () {
   let jobs = await Job.findAll();
   let id = jobs[0].id;
   return id;  

@@ -64,26 +64,24 @@ async function commonBeforeAll() {
   });
 
 
-  // const job1 = await Job.create({
-  //   title: "j1",
-  //   salary: 100000,
-  //   equity: 0.001,
-  //   company_handle: "c1"
-  // })
-  // jobIds[job1.title] = job1.id;
-  // const job2 = await Job.create({
-  //   title: "j2",
-  //   salary: 1000000,
-  //   equity: 0,
-  //   company_handle: "c2"
-  // })
-  // jobIds[job2.title] = job2.id;
-  // const job3 = await Job.create({
-  //   title: "j3",
-  //   salary: 80000,
-  //   equity: 0.085,
-  //   company_handle: "c3"
-  // })
+  await Job.create({
+    title: "j1",
+    salary: 100000,
+    equity: 0.001,
+    companyHandle: "c1"
+  })
+  await Job.create({
+    title: "j2",
+    salary: 1000000,
+    equity: 0,
+    companyHandle: "c2"
+  })
+  await Job.create({
+    title: "j3",
+    salary: 80000,
+    equity: 0.085,
+    companyHandle: "c3"
+  })
 
 
 }
@@ -104,6 +102,12 @@ async function commonAfterAll() {
 const u1Token = createToken({ username: "u1", isAdmin: false });
 const adminToken = createToken({ username: "u2", isAdmin: true });
 
+// /* Helper function to find job1's id */
+// const getJ1Id = async function () {
+//   let jobs = await Job.findAll();
+//   let id = jobs[0].id;
+//   return id;  
+// }
 
 module.exports = {
   commonBeforeAll,
@@ -111,5 +115,5 @@ module.exports = {
   commonAfterEach,
   commonAfterAll,
   u1Token,
-  adminToken
+  adminToken,
 };

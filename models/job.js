@@ -54,41 +54,31 @@ class Job {
            ORDER BY id`);
     return jobsResp.rows;
   }
-  // /** Filter list of all companies.
-  //   * name: filter by company name that includes given phrase (case insensitive)
-  //   * minEmployees: filter to companies that have at least that number of employees.
-  //   * maxEmployees: filter to companies that have no more than that number of employees.
-  //   ** If the minEmployees parameter is greater than the maxEmployees parameter, respond with a 400 error with an appropriate message.
-  //   * Returns [{ handle, name, description, numEmployees, logoUrl }, ...]
-  //   * If no companies found, returns []
-  //  **/
+  /** Filter list of all jobs.
+   * title: filter by job title. Like before, this should be a case-insensitive, matches-any-part-of-string search.
+   * minSalary: filter to jobs with at least that salary.
+   *hasEquity: if true, filter to jobs that provide a non-zero amount of equity If false or not included in the filtering, list all jobs regardless of equity.
+   **/
 
-  // static async filterJobs({ name, minEmployees, maxEmployees }) {
-  //   if (minEmployees > maxEmployees) {
-  //     throw new BadRequestError("minEmployees cannot exceed maxEmployees.");
-  //   }
-  //   let filterStrArr = [];
-  //   if (name && !name.includes(`'`) && !name.includes(`;`)) {
-  //     filterStrArr.push(`name ILIKE '%${name}%'`);
-  //   }
-  //   if (minEmployees !== undefined) {
-  //     filterStrArr.push(`num_employees >= ${minEmployees}`);
-  //   }
-  //   if (maxEmployees !== undefined) {
-  //     filterStrArr.push(`num_employees <= ${maxEmployees}`);
-  //   }
-  //   const whereClause = filterStrArr.join(" AND ");
-  //   const companiesRes = await db.query(
-  //     `SELECT handle,
-  //                 name,
-  //                 description,
-  //                 num_employees AS "numEmployees",
-  //                 logo_url AS "logoUrl"
-  //          FROM companies
-  //          WHERE ${whereClause}
-  //          ORDER BY name`);
-  //   return companiesRes.rows;
-  // }
+  static async filterJobs({ title, minSalary, hasEquity }) {
+    let filterStrArr = [];
+    if (title && !title.includes(`'`) && !title.includes(`;`)) {
+      filterStrArr.push(`title ILIKE '%${title}%'`);
+    }
+    if (minSalary !== undefined) {
+      filterStrArr.push(`salary >= ${minSalary}`);
+    }
+    if (hasEquity === true) {
+      filterStrArr.push(`equity > 0`);
+    }
+    const whereClause = filterStrArr.join(" AND ");
+    const jobsRes = await db.query(
+      `SELECT id, title, salary, equity, company_handle AS "companyHandle"
+       FROM jobs
+       WHERE ${whereClause}
+       ORDER BY id`);
+    return jobsRes.rows;
+  }
 
   /* gets job by id */
   static async get(id) {
@@ -119,7 +109,7 @@ class Job {
 
   static async update(id, data) {
     const { setCols, values } = sqlForPartialUpdate(
-      data,{});
+      data, {});
     const idIdx = "$" + (values.length + 1);
 
     const querySql = `UPDATE jobs

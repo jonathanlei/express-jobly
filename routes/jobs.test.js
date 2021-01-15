@@ -120,64 +120,66 @@ describe("GET /jobs", function () {
         ],
     });
   });
-  // test("filter validation works properly", async function () {
-  //   const resp = await request(app).get("/companies?minEmployees=-1");
-  //   expect(resp.statusCode).toEqual(400);
-  //   expect(resp.body).toEqual({
-  //     "error": {
-  //       "message": [
-  //         "instance.minEmployees must have a minimum value of 0"
-  //       ],
-  //       "status": 400
-  //     }
-  //   });
-  // });
-  // test("filter validation works properly", async function () {
-  //   const resp = await request(app).get("/companies?maxEmployees=-1");
-  //   expect(resp.statusCode).toEqual(400);
-  //   expect(resp.body).toEqual({
-  //     "error": {
-  //       "message": [
-  //         "instance.maxEmployees must have a minimum value of 0"
-  //       ],
-  //       "status": 400
-  //     }
-  //   });
-  // });
-  // test("filter validation works properly", async function () {
-  //   const resp = await request(app).get("/companies?name=");
-  //   expect(resp.statusCode).toEqual(400);
-  //   expect(resp.body).toEqual({
-  //     "error": {
-  //       "message": [
-  //         "instance.name does not meet minimum length of 1"
-  //       ],
-  //       "status": 400
-  //     }
-  //   });
-  // });
+  test("filter validation works properly", async function () {
+    const resp = await request(app).get("/jobs?minSalary=-1");
+    expect(resp.statusCode).toEqual(400);
+    expect(resp.body).toEqual({
+      "error": {
+        "message": [
+          "instance.minSalary must have a minimum value of 0"
+        ],
+        "status": 400
+      }
+    });
+  });
 
-  // test("filter correctly with valid inputs", async function () {
-  //   const resp = await request(app).get("/companies?name=c&minEmployees=2&maxEmployees=3");
-  //   expect(resp.statusCode).toEqual(200);
-  //   expect(resp.body).toEqual({
-  //     "companies": [
-  //       {
-  //         handle: "c2",
-  //         name: "C2",
-  //         description: "Desc2",
-  //         numEmployees: 2,
-  //         logoUrl: "http://c2.img",
-  //       },
-  //       {
-  //         handle: "c3",
-  //         name: "C3",
-  //         numEmployees: 3,
-  //         description: "Desc3",
-  //         logoUrl: "http://c3.img",
-  //       }]
-  //   });
-  // });
+  test("filter validation works properly", async function () {
+    const resp = await request(app).get("/jobs?title=");
+    expect(resp.statusCode).toEqual(400);
+    expect(resp.body).toEqual({
+      "error": {
+        "message": [
+          "instance.title does not meet minimum length of 1"
+        ],
+        "status": 400
+      }
+    });
+  });
+
+  test("filter correctly with valid inputs", async function () {
+    const resp = await request(app).get("/jobs?title=j&minSalary=150000");
+    expect(resp.statusCode).toEqual(200);
+    expect(resp.body).toEqual({
+      "jobs": [{
+        id: expect.any(Number),
+        title: "j2",
+        salary: 1000000,
+        equity: "0",
+        companyHandle: "c2"
+      }]
+    });
+  });
+
+  test("filter correctly with valid inputs", async function () {
+    const resp = await request(app).get("/jobs?hasEquity=true&minSalary=50000");
+    expect(resp.statusCode).toEqual(200);
+    expect(resp.body).toEqual({
+      "jobs": [{
+        id: expect.any(Number),
+        title: "j1",
+        salary: 100000,
+        equity: "0.001",
+        companyHandle: "c1"
+      },
+      {
+        id: expect.any(Number),
+        title: "j3",
+        salary: 80000,
+        equity: "0.085",
+        companyHandle: "c3"
+      }]
+    });
+  });
 
   test("fails: test next() handler", async function () {
     // there's no normal failure event which will cause this route to fail ---

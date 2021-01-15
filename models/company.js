@@ -121,6 +121,8 @@ class Company {
 
     return company;
   }
+  /*  */
+  // static async apply
 
   /** Update company data with `data`.
    *
